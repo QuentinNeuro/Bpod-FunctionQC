@@ -11,9 +11,9 @@ soundResponse=[S.GUI.CueBegin S.GUI.CueEnd];
 
 switch action
     case 'ini'        
-try
-    close 'Auditory Tuning Curve';
-end
+% try
+%     close 'Auditory Tuning Curve';
+% end
 %% Data initialization
 for i=1:NbOfTrialTypes
 	thisSound=sprintf('Sound_%.0d',i);

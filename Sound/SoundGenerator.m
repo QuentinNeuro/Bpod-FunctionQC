@@ -14,17 +14,17 @@ function sound=SoundGenerator(sampRate, meanFreq, widthFreq, nbOfFreq, duration,
 volume=1;
 % Adjust the amplitude to get 75db
 % Last Calibration 
-if meanFreq<5000
-    volume=1/3;
-elseif meanFreq<9000
-    volume=1/2;
-elseif meanFreq<11000
-    volume=1;
-elseif meanFreq<17000
-    volume=1/0.7;
-else % 17000Hz and above
-    volume=1/0.05;
-end
+% if meanFreq<5000
+%     volume=1/3;
+% elseif meanFreq<9000
+%     volume=1/2;
+% elseif meanFreq<11000
+%     volume=1;
+% elseif meanFreq<17000
+%     volume=1/0.7;
+% else % 17000Hz and above
+%     volume=1/0.05;
+% end
 % Generates the waveform  
     
     frequencies=logspace(log10(meanFreq*1/widthFreq), log10(meanFreq*widthFreq),nbOfFreq);

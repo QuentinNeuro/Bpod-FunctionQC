@@ -1,17 +1,6 @@
 function [NidaqDemod, NidaqRaw]=Online_NidaqDemod(rawData,refData,modFreq,modAmp,StateToZero)
-%
-%
-
 global BpodSystem S
 
-%% Time Zero
-if nargin<5
-TimeToZero=0;
-else
-TimeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(StateToZero)(1,1);
-end
-
-%% Parameters
 decimateFactor=S.GUI.DecimateFactor;
 duration=S.GUI.NidaqDuration;
 sampleRate=S.GUI.NidaqSamplingRate;
@@ -67,6 +56,7 @@ DFF=100*(Data-Fbaseline)/Fbaseline;
 
 %% Time
 Time=linspace(0,duration,ExpectedSize);
+TimeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(StateToZero)(1,1);
 Time=Time'-TimeToZero;
 
 %% Raw Data

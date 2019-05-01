@@ -5,7 +5,7 @@ labelx='Time (sec)'; labely='DF/F';
 minx=S.GUI.TimeMin; maxx=S.GUI.TimeMax;  xstep=1;    xtickvalues=minx:xstep:maxx;
 miny=S.GUI.NidaqMin; maxy=S.GUI.NidaqMax;
 MeanThickness=2;
-nbOfTrialTypes=size(S.trialsMatrix,1);
+nbOfTrialTypes=size(S.TrialsMatrix,1);
 nbOfPlotRows=1+ceil(nbOfTrialTypes/2);
 
 switch action

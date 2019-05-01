@@ -5,6 +5,8 @@ labelx='Time (sec)'; labely='DF/F';
 minx=S.GUI.TimeMin; maxx=S.GUI.TimeMax;  xstep=1;    xtickvalues=minx:xstep:maxx;
 miny=S.GUI.NidaqMin; maxy=S.GUI.NidaqMax;
 MeanThickness=2;
+nbOfTrialTypes=size(S.trialsMatrix,1);
+nbOfPlotRows=1+ceil(nbOfTrialTypes/2);
 
 switch action
     case 'ini'
@@ -27,7 +29,7 @@ set(ProtoLegend,'String',ProtoSummary);
 set(ProtoLegend,'Position',[10,1,400,20]);
 
 %% Current Nidaq plot
-lastsubplot=subplot(4,2,[1 2]);
+lastsubplot=subplot(nbOfPlotRows,2,[1 2]);
 hold on
 title('Nidaq recording');
 xlabel(labelx); ylabel('Voltage');
@@ -39,60 +41,58 @@ hold off
 
 %% Plot previous recordings
 subplotTitles=S.TrialsNames;
-for i=1:S.TrialsMatrix(end,1)
+for i=1:nbOfTrialTypes
     subplotTitles{i}=sprintf('%s - cue # %.0d',subplotTitles{i},S.TrialsMatrix(i,3));
 end
 %Subplot
-for i=1:6
-    photosubplot(i)=subplot(4,2,i+2);
+for i=1:nbOfTrialTypes
+    photosubplot(i)=subplot(nbOfPlotRows,2,i+2);
     hold on
     title(subplotTitles(i));
-    xlabel(labelx); ylabel(labely);
     ylim auto;
     set(photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy]);
+    singleplot(i)=plot([-5 5],[0 0],'-k');
     rewplot(i)=plot([0 0],[-1,1],'-b');
     meanplot(i)=plot([-5 5],[0 0],'-r');
     hold off
 end
-
-set(photosubplot(1),'XLabel',[]);
-set(photosubplot(2),'XLabel',[],'YLabel',[]);
-set(photosubplot(3),'XLabel',[]);
-set(photosubplot(4),'XLabel',[],'YLabel',[])
-%set(photosubplot(5),'XLabel',labelx,'YLabel',labely);
-set(photosubplot(6),'YLabel',[]);
-
+%Making plot pretty
+for i=1:2:nbOfTrialTypes
+    set(photosubplot(i),'YLabel',labely);
+end
+set(photosubplot(end-1),'XLabel',labelx,'YLabel',labely);
+set(photosubplot(end),'YLabel',labely);
 %Save the figure properties
 figData.fig=figPlot;
 figData.lastsubplot=lastsubplot;
 figData.lastplotRaw=lastplotRaw;
 figData.lastplot470=lastplot470;
 figData.photosubplot=photosubplot;
+figData.singleplot=singleplot;
 figData.meanplot=meanplot;
-
     case 'update'
 currentTrialType=BpodSystem.Data.TrialTypes(end);
 %% Update last recording plot
 set(figData.lastplotRaw, 'Xdata',nidaqRaw(:,1),'YData',nidaqRaw(:,2));
 set(figData.lastplot470, 'Xdata',newData470(:,1),'YData',newData470(:,2));
-         if currentTrialType<=6
-%% Compute new average trace
-allData=get(figData.photosubplot(currentTrialType), 'UserData');
-dataSize=size(allData,2);
-allData(:,dataSize+1)=newData470(:,3);
-set(figData.photosubplot(currentTrialType), 'UserData', allData);
-meanData=mean(allData,2);
-
-curSubplot=figData.photosubplot(currentTrialType);
+%% Add new trials
+singledataX=get(figData.singleplot(currentTrialType),'Xdata');
+singledataY=get(figData.singleplot(currentTrialType),'Ydata');
+if size(singledataX,1)==1
+    singledataX=newData470(:,1);
+    singledataY=newData470(:,3);
+else
+    singledataX=[singledataX newData470(:,1)];
+    singledataY=[singledataY newData470(:,3)];
+end
+set(figData.singleplot(currentTrialType), 'Xdata',singledataX,'YData',singledataY,'-k');
+%% Compute new mean trace
+meanData=mean(singledataY,2);
 set(figData.meanplot(currentTrialType), 'Xdata',newData470(:,1),'YData',meanData,'LineWidth',MeanThickness);
-set(curSubplot,'NextPlot','add');
-plot(newData470(:,1),newData470(:,3),'-k','parent',curSubplot);
 uistack(figData.meanplot(currentTrialType), 'top');
-hold off
-         end
 %% Update GUI plot parameters
- for i=1:6
-     set(figData.photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy])
+for i=1:nbOfTrialTypes
+set(figData.photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy])
 end
 end
 end

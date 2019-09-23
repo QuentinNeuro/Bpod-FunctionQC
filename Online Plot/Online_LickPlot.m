@@ -63,7 +63,7 @@ for i=1:length(trialSequence)
     trialsPlot(i)=plot(i,S.TrialsMatrix(trialSequence(i),3),'LineStyle','none','marker',char(S.TrialsMatrix(trialSequence(i),7)),'MarkerFaceColor','b', 'MarkerEdgeColor','k','MarkerSize',MS_trial);
 end
 hold off
-set(trialsubplot,'XLim',[3-plotSpan 3+plotSpan],'YLim',[0.5 0.5+max(S.TrialsMatrix(:,3))],'YDir','reverse','YTick',1:max(S.TrialsMatrix(:,3)));
+set(trialsubplot,'XLim',[3-plotSpan 3+plotSpan],'YLim',[-0.5 0.5+max(S.TrialsMatrix(:,3))],'YDir','reverse','YTick',1:max(S.TrialsMatrix(:,3)));
 legend([l1 l2 l3 l4 l5],'Reward','Omission','Punishment','Hit','Missed','Location','east');
 legend('boxoff');
 %% Lick plot

@@ -1,4 +1,4 @@
-function [outcome, curLickEvents]=Online_LickEvents2(StateToZero)
+function [outcome, curLickEvents]=Online_LickEvents(StateToZero)
 %[outcome, curLickEvents]=CurrentTrialEvents(BpodSystem, trialsMatrix, currentTrial, currentTrialType, time)
 %
 %This function extracts the outcome (absence or presence of neverlickedstate) and the licking events

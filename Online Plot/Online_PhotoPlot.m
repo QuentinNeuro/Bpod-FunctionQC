@@ -18,7 +18,7 @@ end
 
 %% Create Figure
 ScrSze=get(0,'ScreenSize');
-FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-60*rowP];
+FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
 figPlot=figure('Name',figtitle,'Position',FigSze, 'numbertitle','off');
 hold on
 ProtoSummary=sprintf('%s : %s -- %s - %s',...
@@ -40,26 +40,22 @@ lastplot470=plot([-5 5],[0 0],'-g','LineWidth',MeanThickness);
 hold off
 
 %% Plot previous recordings
-subplotTitles=S.TrialsNames;
-for i=1:ttNb
-    subplotTitles{i}=sprintf('%s - cue # %.0d',subplotTitles{i},S.TrialsMatrix(i,3));
-end
-%Subplot
 for i=1:ttNb
     photosubplot(i)=subplot(rowP,2,i+2);
     hold on
-    title(subplotTitles(i));
-    if mod(i,2)
-    xlabel(labelx);
-    end
+    title(sprintf('%s - cue # %.0d',S.TrialsNames{i},S.TrialsMatrix(i,3)));
     ylim auto;
     set(photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy]);
-    rewplot(i)=plot([0 0],[-1,1],'-b');
-    meanplot(i)=plot([-5 5],[0 0],'-r');
+	rewplot(i)=plot([0 0],[-1,1],'-b');
+	meanplot(i)=plot([-5 5],[0 0],'-r');
+    if mod(i,2)
+        ylabel(labely);
+    end
+    if i>=ttNb-1
+        xlabel(labelx);
+    end
     hold off
 end
-set(photosubplot(ttNb-1),'YLabel',labely);
-set(photosubplot(ttNb),'YLabel',labely);
 
 %Save the figure properties
 figData.fig=figPlot;
@@ -88,8 +84,7 @@ set(curSubplot,'NextPlot','add');
 plot(newData470(:,1),newData470(:,3),'-k','parent',curSubplot);
 uistack(figData.meanplot(currentTrialType), 'top');
 hold off
-
 %% Update GUI plot parameters
- set(figData.photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy])
+ set(figData.photosubplot(currentTrialType),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy])
 end
 end

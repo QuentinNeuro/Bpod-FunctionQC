@@ -19,12 +19,15 @@ global BpodSystem S
 plotSpan=20.5;  %plotting window
 MS_trial=5;     %marker size for trial
 MS_licks=2;     %marker size for lick
-maxy=100;       %y axe for licks
-ystep=25;       %y axe for licks
-
-minx=S.GUI.TimeMin;
-maxx=S.GUI.TimeMax;
+labelx='Time (sec)';
+minx=S.GUI.TimeMin; maxx=S.GUI.TimeMax;
 xstep=1;    xtickvalues=minx:xstep:maxx;
+labely='Trial number';
+miny=0; maxy=100; 
+ystep=25; ytickvalues=miny:ystep:maxy;
+
+ttNb=S.NumTrialTypes;
+rowP=ceil(ttNb/2)+1;
 
 switch action
     case 'ini'
@@ -34,7 +37,7 @@ try
 end
 %% Create Figure
 ScrSze=get(0,'ScreenSize');
-FigSze=[1 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
+FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
 figPlot=figure('Name','Online Lick Plot','Position',FigSze, 'numbertitle','off');
 hold on
 ProtoSummary=sprintf('%s : %s -- %s - %s',...
@@ -44,7 +47,7 @@ MyBox = uicontrol('style','text');
 set(MyBox,'String',ProtoSummary, 'Position',[10,1,400,20]);
 
 %% Trial plot
-trialsubplot=subplot(4,2,[1 2]);
+trialsubplot=subplot(rowP,2,[1 2]);
 hold on
 %Specify legend and axes
 l1=plot(-20,-20,'ko','MarkerSize',MS_trial); %circle legend, ie reward
@@ -68,33 +71,24 @@ legend([l1 l2 l3 l4 l5],'Reward','Omission','Punishment','Hit','Missed','Locatio
 legend('boxoff');
 %% Lick plot
 %PlotParameters
-labely='Trial number';
-miny=0;                             ytickvalues=miny:ystep:maxy;
-labelx='Time from reward / cue (sec)';
-subplotTitles=S.TrialsNames;
-for i=1:S.TrialsMatrix(end,1)
-    subplotTitles{i}=sprintf('%s - cue # %.0d',subplotTitles{i},S.TrialsMatrix(i,3));
-end
-%Subplot
-for i=1:6
-    licksubplot(i)=subplot(4,2,i+2);
+
+for i=1:ttNb
+    licksubplot(i)=subplot(rowP,2,i+2);
     hold on
+    title(sprintf('%s - cue # %.0d',S.TrialsNames{i},S.TrialsMatrix(i,3)));
     rewplot(i)=plot([0 0],[-5,maxy],'-r');
     trackingplot(i)=plot([S.GUI.TimeMin S.GUI.TimeMax],[0 0],'-b');
     lickplot(i)=plot([0 0],[1,500],'sk','MarkerSize',MS_licks,'MarkerFaceColor','k');
-    set(lickplot(i), 'XData',[],'YData',[]);
-    title(subplotTitles(i));
-    xlabel(labelx); 
+    set(lickplot(i),'XData',[],'YData',[]);
+    if mod(i,2)
     ylabel(labely);
+    end
     set(licksubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy],'YTick',ytickvalues,'YDir', 'reverse');
+    if i>=ttNb-1
+        xlabel(labelx);
+    end
+    hold off
 end
-
-set(licksubplot(1),'XLabel',[]);
-set(licksubplot(2),'XLabel',[],'YLabel',[]);
-set(licksubplot(3),'XLabel',[]);
-set(licksubplot(4),'XLabel',[],'YLabel',[])
-%set(licksubplot(5),'XLabel',labelx,'YLabel',labely);
-set(licksubplot(6),'YLabel',[]);
 
 %Save the figure properties
 figData.fig=figPlot;
@@ -137,7 +131,7 @@ end
 
 %Update the figure with the new licking data
 if trialTypeCount>maxy
-    set(figData.licksubplot(currenttrialType),'YLim',[0 trialTypeCount]);
+    set(figData.licksubplot(currentTrialType),'YLim',[0 trialTypeCount]);
 end
 updated_xdata=[previous_xdata licks];
 newydata=linspace(trialTypeCount,trialTypeCount,size(licks,2));
@@ -145,9 +139,7 @@ updated_ydata=[previous_ydata newydata];
 set(figData.lickplot(currentTrialType),'XData',updated_xdata,'YData',updated_ydata);
 set(figData.trackingplot(currentTrialType),'YData',[trialTypeCount trialTypeCount]);
         end
-%% Update GUI plot parameters
-for i=1:6       
-        set(figData.licksubplot(i),'XLim',[minx maxx],'XTick',xtickvalues);
-end
+%% Update GUI plot parameters  
+set(figData.licksubplot(currentTrialType),'XLim',[minx maxx],'XTick',xtickvalues);
 end
 end

@@ -1,5 +1,5 @@
 function [photometryData,wheelData,photometry2Data]=Nidaq_photometry(action,Param)
-global nidaq S
+global nidaq S 
 
 switch action
     case 'ini'

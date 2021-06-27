@@ -1,0 +1,414 @@
+function success = startBonsai(bonsaiPath, workflowPath, varargin)
+%STARTBONSAI Start Bonsai with a predefined workflow (tree) and add. arguments
+%
+% Synopsis:
+% ---------
+% success = startBonsai(bonsaiPath, workflowPath);
+% success = startBonsai(bonsaiPath, workflowPath, 'FileName', 'SubjectXYZ');
+%
+% Arguments:
+% ----------
+% bonsaiPath: Fully-qualified (absolute) path to 'Bonsai.exe' as a string
+%             E.g.: 'C:\Users\<username>\AppData\Local\Bonsai\Bonsai.exe'
+%
+% workflowPath: Fully-qualified (absolute) path to the workflow to be opened as 
+%               a string
+%               E.g.: 'C:\Users\<username>\Documents\Bosnai\Workflow.bonsai'
+%
+%
+% Variable arguments:
+% -------------------
+% Variable arguments must be passed as name/value pairs!
+% - closeBonsaiInstances: Logical value to specify if already opened Bonsai
+%                         instances need to be closed before starting this new
+%                         instace.
+%                         Default value: true
+%
+% - closeBonsaiInstanceCntr: Numerical value how many instances should be closed
+%                            Default value: 5
+%
+% - openBonsaiDelay: Numerical value to specify how many seconds to wait
+%                    after Bonsai was started
+%                    default value: 4 (seconds)
+%
+% - startWorkflow: Logical value to control if the loaded workflow should also
+%                  be started (automatically pressing the run button)
+%                  Default value: true
+%
+% - startWorkflowDelay: Numerical value to specify how many seconds to wait
+%                       after Bonsai was started but before starting the
+%                       specified workflow
+%                       Default value: 1 (seconds)
+%
+% - postStartWorkflowDelay: Numerical value to specify how many seconds to wait
+%                           after the workflow was started and the function ends
+%                           Default value: 1 (seconds)
+%
+% - all other name/value pairs will be treated as arguments to pass to Bonsai!
+%
+% Output:
+% -------
+% A string indicating the action:
+% - 'Start': All commands were executed without error and Bonsai should have started
+% - 'Error': Something went wrong and Bonsai might not have been started
+%
+% Additional Information:
+% -----------------------
+% This script makes use of the Windows Script Host to start Bonsai. For ore
+% information, please see following references:
+% - Reference (Windows Script Host):
+%   https://docs.microsoft.com/en-us/previous-versions//98591fh7%28v%3dvs.85%29
+% - Methods (Windows Script Host):
+%   https://docs.microsoft.com/en-us/previous-versions//2x3w20xf%28v%3dvs.85%29
+% - AppActivate Method
+%   https://docs.microsoft.com/en-us/previous-versions//wzcddbek%28v%3dvs.85%29
+% - Run Method (Windows Script Host)
+%   https://docs.microsoft.com/en-us/previous-versions//d5fk67ky%28v%3dvs.85%29
+% - SendKeys Method
+%   https://docs.microsoft.com/en-us/previous-versions//8c6yea83%28v%3dvs.85%29
+%
+%
+% Author: Michael Wulf
+%         Washington University in St. Louis
+%         Kepecs Lab
+%
+% Date:    2021/04/08
+% Version: 1.0.1
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Sepcify an argument struct
+argStruct = struct();
+argStruct.closeBonsaiInstances    = true;
+argStruct.closeBonsaiInstanceCntr = 5;
+argStruct.openBonsaiDelay         = 4;
+argStruct.startWorkflow           = true;
+argStruct.startWorkflowDelay      = 1;
+argStruct.postStartWorkflowDelay  = 1;
+
+% String that contains the arguments to pass to Bonsai
+bonsaiArgString = '';
+
+% Check arguments
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% We need at least 2 arguments - bonsaiPath and workflowPath
+narginchk(2, inf);
+% Basic check of bonsai related arguments
+validateattributes(bonsaiPath,   {'char'}, {'scalartext'}, mfilename, 'bonsaiPath',   1);
+validateattributes(workflowPath, {'char'}, {'scalartext'}, mfilename, 'workflowPath', 2);
+
+% Check if Bonsai path is valid
+if (exist(bonsaiPath, 'file') == 0)
+    error('Bonsai executable can''t be found under specified path ''%s''!', bonsaiPath);
+end
+
+% Check if Bonsai workflow is valid
+if (exist(workflowPath, 'file') == 0)
+    error('Bonsai workflow can''t be found under specified path ''%s''!', workflowPath);
+end
+
+% Now check the varargs...
+nvarargin = length(varargin);
+% Varargs need to be presented as name-value pairs
+if (mod(nvarargin,2) == 1)
+    error('Arguments to function ''createControlSignal'' must be passed as argument name and value !');
+end
+
+vararginCntr = 1;
+
+while (vararginCntr < nvarargin)
+    % Take out next named argument
+    varargName = varargin{vararginCntr};
+    
+    % If the named argument is named like a field name of argStruct, parse it...
+    if (any(strcmpi(varargName, fieldnames(argStruct))))
+        switch lower(varargName)
+            case lower('closeBonsaiInstances')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                % Check if argument is a string
+                if (ischar(temp))
+                    % Remove whitespaces in the beginning/end
+                    temp = strtrim(temp);
+                    
+                    if (isnan(str2double(temp)) || isempty(str2double(temp)))
+                        % Argument is a string that can't be interpreted as numerical value.
+                        switch lower(temp)
+                            case 'true'
+                                closeBonsaiInstances = true;
+                                
+                            case 'visible'
+                                closeBonsaiInstances = true;
+                                
+                            case 'false'
+                                closeBonsaiInstances = false;
+                                
+                            case 'invisible'
+                                closeBonsaiInstances = false;
+                                
+                            otherwise
+                                error('Unsupported value for argument ''closeBonsaiInstances''!');
+                                
+                        end
+                    else
+                        % Argument is a string that can be interpreted as numerical value.
+                        % Interpret 0 as false and everything else as true
+                        temp = str2double(temp);
+                        if (temp == 0)
+                            closeBonsaiInstances = false;
+                        else
+                            closeBonsaiInstances = true;
+                        end
+                    end
+                    
+                elseif (islogical(temp))
+                    % Argument is a logical value and can be used as is...
+                    closeBonsaiInstances = temp;
+                    
+                elseif (isnumeric(temp))
+                    % If the argument is a numerical value, interpret 0 as
+                    % false and everything else as true
+                    if (temp == 0)
+                        closeBonsaiInstances = false;
+                    else
+                        closeBonsaiInstances = true;
+                    end
+                else
+                    error('Unsupported data type for argument ''closeBonsaiInstances''!');
+                end
+                
+                % Store value in parameter struct
+                argStruct.closeBonsaiInstances = closeBonsaiInstances;
+                
+            case lower('closeBonsaiInstanceCntr')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                if ( ~(isnumeric(temp)) || (temp < 0)|| ~(isscalar(temp)) || ~(mod(temp,1) == 0) )
+                    error('Argument closeBonsaiInstanceCntr must be a scalar integer value greater or equal to 0 specifying the maximum number of opened Bonsai instances that could be closed...');
+                end
+                
+                % Store value in struct
+                argStruct.closeBonsaiInstanceCntr = temp;
+                
+            case lower('openBonsaiDelay')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                if ( ~(isnumeric(temp)) || (temp < 0)|| ~(isscalar(temp)) )
+                    error('Argument openBonsaiDelay must be a scalar value greater or equal to 0 specifying the max. amount of time to wait for waiting to Bonsai to start...');
+                end
+                
+                % Store value in struct
+                argStruct.openBonsaiDelay = temp;
+                
+            case lower('startWorkflow')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                % Check if argument is a string
+                if (ischar(temp))
+                    % Remove whitespaces in the beginning/end
+                    temp = strtrim(temp);
+                    
+                    if (isnan(str2double(temp)) || isempty(str2double(temp)))
+                        % Argument is a string that can't be interpreted as numerical value.
+                        switch lower(temp)
+                            case 'true'
+                                startWorkflow = true;
+                                
+                            case 'visible'
+                                startWorkflow = true;
+                                
+                            case 'false'
+                                startWorkflow = false;
+                                
+                            case 'invisible'
+                                startWorkflow = false;
+                                
+                            otherwise
+                                error('Unsupported value for argument ''startWorkflow''!');
+                                
+                        end
+                    else
+                        % Argument is a string that can be interpreted as numerical value.
+                        % Interpret 0 as false and everything else as true
+                        temp = str2double(temp);
+                        if (temp == 0)
+                            startWorkflow = false;
+                        else
+                            startWorkflow = true;
+                        end
+                    end
+                    
+                elseif (islogical(temp))
+                    % Argument is a logical value and can be used as is...
+                    startWorkflow = temp;
+                    
+                elseif (isnumeric(temp))
+                    % If the argument is a numerical value, interpret 0 as
+                    % false and everything else as true
+                    if (temp == 0)
+                        startWorkflow = false;
+                    else
+                        startWorkflow = true;
+                    end
+                else
+                    error('Unsupported data type for argument ''startWorkflow''!');
+                end
+                
+                % Store value in parameter struct
+                argStruct.startWorkflow = startWorkflow;
+                
+            case lower('startWorkflowDelay')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                if ( ~(isnumeric(temp)) || (temp < 0)|| ~(isscalar(temp)) )
+                    error('Argument startWorkflowDelay must be a scalar value greater or equal to 0 specifying the max. amount of time to wait for waiting to Bonsai to start...');
+                end
+                
+                % Store value in struct
+                argStruct.startWorkflowDelay = temp;
+                
+            case lower('postStartWorkflowDelay')
+                % Take next vararg element and store it in temp
+                temp = varargin{vararginCntr+1};
+                
+                % Increment counter
+                vararginCntr = vararginCntr + 2;
+                
+                if ( ~(isnumeric(temp)) || (temp < 0)|| ~(isscalar(temp)) )
+                    error('Argument postStartWorkflowDelay must be a scalar value greater or equal to 0 specifying the max. amount of time to wait for waiting to Bonsai to start...');
+                end
+                
+                % Store value in struct
+                argStruct.postStartWorkflowDelay = temp;
+        end
+        
+        % otherwise, treat it as an argument to be passed to Bonsai...
+    else
+        % Take next vararg element and store it in temp
+        varargValue = varargin{vararginCntr+1};
+        
+        % Increment counter
+        vararginCntr = vararginCntr + 2;
+        
+        % Check that content to be passed is a string
+        if (~isvector(varargValue) && ~isempty(varargValue))
+            error('Value for %s to be passed to Bonsai must be a string (char vector!)', varargName);
+        end
+        
+        if (isnumeric(varargValue))
+            varargValue = num2str(varargValue);
+            if (isempty(varargValue))
+                varargValue = '';
+            end
+        end
+        
+        % Append arguments being passed to Bonsai
+        bonsaiArgString = sprintf('%s-p:%s="%s" ', bonsaiArgString, varargName, varargValue);
+    end
+    
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Predefine return value
+success = true;
+try
+    % Get an instance of scripting shell
+    % Necessarry to find open instances and to start Bonsai via command line
+    hndlWScript = actxserver('WScript.Shell');
+    
+    % Check if user wants to close all opened Bonsai instances first...
+    if (argStruct.closeBonsaiInstances)
+        
+        % First, try to close all open bonsai windows
+        % AppActivate will return true (1) if a window of the application Bonsai
+        % can be brought to foreground in Windows (can be focused)
+        stillOpenFlag = hndlWScript.AppActivate('Bonsai');
+        
+        % Counter for keeping track of how many Bonsai-windows have been closed so
+        % far. If too many Bonsai-windows are opened the user might have opened
+        % additional Bonsai instances and this script will terminate with an error
+        % stating that circumstance.
+        closingCntr = 0;
+        
+        while(stillOpenFlag == 1)
+            % Send Alt-F4 to close Bonsai
+            % - code for Alt-key: '%'
+            % - code for F4-key:  {F4}
+            % -> code for Alt-F4: %{F4}
+            hndlWScript.SendKeys('%{F4}');
+            
+            % Wait a second for closing to be finished
+            pause(1);
+            
+            % Increment counter
+            closingCntr = closingCntr + 1;
+            
+            % MAke an output to the console
+            fprintf('Trying to close Bonsai for the %d. time...\n', closingCntr);
+            
+            % Activate (bring to focus) another possibly available Bonsai window
+            stillOpenFlag = hndlWScript.AppActivate('Bonsai');
+            
+            if (closingCntr > argStruct.closeBonsaiInstanceCntr)
+                error('Too many Bonsai windows open...');
+            end
+        end
+    end
+    
+    % Starting Bonsai
+    hndlWScript.Run([bonsaiPath ' ' workflowPath ' ' bonsaiArgString]);
+    
+    fprintf('Trying to open Bonsai...\n');
+    
+    % Wait for Bonsai to start
+    pause(argStruct.openBonsaiDelay);
+    
+    % Bring Bonsai to foreground
+    bonsaiReady = hndlWScript.AppActivate('Bonsai');
+    if (~bonsaiReady)
+        success = false;
+        warning('Bonsai failed to open after %d seconds of delay', argStruct.openBonsaiDelay);
+        return;
+    end
+    
+    % If user wants to start the workflow automatically...
+    if (argStruct.startWorkflow)
+        % Wait another bit maybe!?!
+        pause(argStruct.startWorkflowDelay);
+        
+        % Send F5-hotkey to start workflow
+        hndlWScript.SendKeys('{F5}');
+        fprintf('Starting workflow...\n');
+        
+        % Specify a delay after starting the workflow
+        pause(argStruct.postStartWorkflowDelay);
+    end
+    
+catch ME
+    success = false;
+    warning('An error occured while trying to start Bonsai...');
+    disp(ME.identifier);
+    disp(ME.message);
+end
+
+end

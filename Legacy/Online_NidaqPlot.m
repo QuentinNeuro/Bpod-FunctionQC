@@ -1,3 +1,4 @@
+%% replaced by Online_PhotoPlot QC june 2021
 function figData=Online_NidaqPlot(action,phototitle,figData,newData470,nidaqRaw)
 global BpodSystem S
 %% general ploting parameters

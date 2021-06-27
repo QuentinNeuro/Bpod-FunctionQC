@@ -1,4 +1,4 @@
-function Modulated_LED=Nidaq_modulation(amp,freq)
+function Modulated_LED=Photometry_mod(amp,freq)
 %Generates a sin wave for LED amplitude modulation.
 global nidaq S
 

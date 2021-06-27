@@ -47,17 +47,17 @@ lh{1} = nidaq.session.addlistener('DataAvailable',@Nidaq_callback);
 %% GET NIDAQ READY TO RECORD
 nidaq.ai_data            = [];
 if S.GUI.Photometry
-    nidaq.LED1              = Nidaq_modulation(S.GUI.LED1_Amp,S.GUI.LED1_Freq);
-    nidaq.LED2              = Nidaq_modulation(0,S.GUI.LED1_Freq);
+    nidaq.LED1              = Photometry_mod(S.GUI.LED1_Amp,S.GUI.LED1_Freq);
+    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq);
 if S.GUI.Isobestic405 || S.GUI.RedChannel
-    nidaq.LED2              = Nidaq_modulation(S.GUI.LED2_Amp,S.GUI.LED2_Freq);
+    nidaq.LED2              = Photometry_mod(S.GUI.LED2_Amp,S.GUI.LED2_Freq);
 end
 if S.GUI.DbleFibers
-    nidaq.LED2              = Nidaq_modulation(S.GUI.LED1b_Amp,S.GUI.LED1b_Freq);
+    nidaq.LED2              = Photometry_mod(S.GUI.LED1b_Amp,S.GUI.LED1b_Freq);
 end
 else
-    nidaq.LED1              = Nidaq_modulation(0,S.GUI.LED1_Freq);
-    nidaq.LED2              = Nidaq_modulation(0,S.GUI.LED1_Freq);
+    nidaq.LED1              = Photometry_mod(0,S.GUI.LED1_Freq);
+    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq);
 end
 nidaq.ao_data           = [nidaq.LED1 nidaq.LED2];
 

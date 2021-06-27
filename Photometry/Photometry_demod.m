@@ -1,4 +1,4 @@
-function [NidaqDemod, NidaqRaw]=Nidaq_demodulation(rawData,refData,modFreq,modAmp,StateToZero)
+function [PhotoDemod, PhotoRaw]=Photometry_demod(rawData,refData,modFreq,modAmp,StateToZero)
 global BpodSystem S
 
 decimateFactor=S.GUI.DecimateFactor;
@@ -67,10 +67,10 @@ DataRaw(1:length(rawData))=rawData;
 TimeRaw=linspace(0,duration,ExpectedSizeRaw);
 TimeRaw=TimeRaw'-TimeToZero;
 %% NewDataSet
-NidaqDemod(:,1)=Time;
-NidaqDemod(:,2)=Data;
-NidaqDemod(:,3)=DFF;
+PhotoDemod(:,1)=Time;
+PhotoDemod(:,2)=Data;
+PhotoDemod(:,3)=DFF;
 
-NidaqRaw(:,1)=TimeRaw;
-NidaqRaw(:,2)=DataRaw;
+PhotoRaw(:,1)=TimeRaw;
+PhotoRaw(:,2)=DataRaw;
 end

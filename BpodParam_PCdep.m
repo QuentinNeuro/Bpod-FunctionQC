@@ -9,7 +9,7 @@ switch getenv('computername')
         Param.LED1bAmp=2;
     case 'KEPECSPHOTO-02'
         Param.rig='Photometry2';
-        Param.nidaqDev='Dev3';
+        Param.nidaqDev='Dev2';
         Param.LED1Amp=2;
         Param.LED2Amp=3.9;
         Param.LED1bAmp=2;

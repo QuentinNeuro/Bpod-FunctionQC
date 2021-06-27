@@ -31,6 +31,6 @@ fclose(BpodUserPathTXT);
 disp(Path)
 
 catch
-    disp('Cannot find the bpod path -- Recorded Users are - Quentin - Ada -- Use ini to use the default bpod folder');
+    disp('Cannot find the bpod path -- Recorded Users are - Quentin // Tzvia // Ada // Sensors -- Use ini to use the default bpod folder');
 end
 end

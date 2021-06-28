@@ -1,4 +1,4 @@
-function figData=Online_PhotoPlot(action,phototitle,figData,newData470,nidaqRaw,plotNb)
+function figData=Online_PhotoPlot(action,phototitle,figData,newData470,nidaqRaw,figID)
 global BpodSystem S
 %% general ploting parameters
 labelx='Time (sec)'; labely='DF/F'; 
@@ -18,7 +18,7 @@ end
 
 %% Create Figure
 ScrSze=get(0,'ScreenSize');
-switch plotNb
+switch figID
     case 1
 FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
     case 2

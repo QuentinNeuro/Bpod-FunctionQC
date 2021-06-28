@@ -1,4 +1,4 @@
-function figData=Online_AudTuningPlot(action,TrialSequence,figData,thisTrial,thisNidaq)
+function figData=Online_AudTuningPlot(action,figtitle,TrialSequence,figData,thisTrial,thisNidaq,figID)
 
 global BpodSystem S
 
@@ -11,9 +11,9 @@ soundResponse=[S.GUI.CueBegin S.GUI.CueEnd];
 
 switch action
     case 'ini'        
-% try
-%     close 'Auditory Tuning Curve';
-% end
+try
+    close(figtitle)
+end
 %% Data initialization
 for i=1:NbOfTrialTypes
 	thisSound=sprintf('Sound_%.0d',i);
@@ -24,8 +24,15 @@ for i=1:NbOfTrialTypes
     figData.Tuning.Y(i)=NaN;
 end
 
-%% Figure initialization        
-figData.figPlot=figure('Name','Auditory Tuning Curve','Position', [800 400 600 700], 'numbertitle','off');
+%% Figure initialization    
+ScrSze=get(0,'ScreenSize');
+switch figID
+    case 1
+FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
+    case 2
+FigSze=[ScrSze(3)*2/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
+end
+figData.figPlot=figure('Name',figtitle,'Position',FigSze, 'numbertitle','off');
 ProtoSummary=sprintf('%s : %s -- %s - %s',...
     date, BpodSystem.GUIData.SubjectName, ...
     BpodSystem.GUIData.ProtocolName);

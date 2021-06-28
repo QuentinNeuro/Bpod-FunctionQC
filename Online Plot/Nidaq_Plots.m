@@ -4,15 +4,15 @@ global BpodSystem nidaq S
 switch action
     case 'ini'
 if S.GUI.Photometry
-    FigPhoto1=Online_PhotoPlot('ini','470-F1',[],[],1);
+    FigPhoto1=Online_PhotoPlot('ini','470-F1',[],[],[],1);
     if S.GUI.DbleFibers
-        FigPhoto2=Online_PhotoPlot('ini','470-F2',[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','470-F2',[],[],[],2);
     end
     if S.GUI.Isobestic405 
-        FigPhoto2=Online_PhotoPlot('ini','405-F1',[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','405-F1',[],[],[],2);
     end
     if S.GUI.RedChannel
-        FigPhoto2=Online_PhotoPlot('ini','565-F1',[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','565-F1',[],[],[],2);
     end
 end
 if S.GUI.Wheel

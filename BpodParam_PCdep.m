@@ -1,19 +1,19 @@
 function Param=BpodParam_PCdep()
 
 switch getenv('computername')
-    case 'KEPECSPHOTO-01'
+    case 'KEPECS-PHOTO01'
         Param.rig='Photometry1';
         Param.nidaqDev='Dev1';
         Param.LED1Amp=2;
         Param.LED2Amp=2.8;
         Param.LED1bAmp=2;
-    case 'KEPECSPHOTO-02'
+    case 'KEPECS-PHOTO02'
         Param.rig='Photometry2';
         Param.nidaqDev='Dev2';
         Param.LED1Amp=2;
         Param.LED2Amp=3.9;
         Param.LED1bAmp=2;
-    case 'KEPECSPHOTO-03'
+    case 'KEPECS-PHOTO03'
         Param.rig='Photometry3';
         Param.nidaqDev='Dev1';
         Param.LED1Amp=2;

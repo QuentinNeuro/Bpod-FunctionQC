@@ -37,7 +37,7 @@ try
 end
 %% Create Figure
 ScrSze=get(0,'ScreenSize');
-FigSze=[ScrSze(3)*1/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
+FigSze=[1 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
 figPlot=figure('Name','Online Lick Plot','Position',FigSze, 'numbertitle','off');
 hold on
 ProtoSummary=sprintf('%s : %s -- %s - %s',...

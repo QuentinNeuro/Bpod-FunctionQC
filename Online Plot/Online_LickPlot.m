@@ -65,7 +65,6 @@ curTrialplot=plot([1 1],[0 0.5+max(S.TrialsMatrix(:,3))],'-b');
 for i=1:length(trialSequence)
     trialsPlot(i)=plot(i,S.TrialsMatrix(trialSequence(i),3),'LineStyle','none','marker',char(S.TrialsMatrix(trialSequence(i),7)),'MarkerFaceColor','b', 'MarkerEdgeColor','k','MarkerSize',MS_trial);
 end
-hold off
 set(trialsubplot,'XLim',[3-plotSpan 3+plotSpan],'YLim',[-0.5 0.5+max(S.TrialsMatrix(:,3))],'YDir','reverse','YTick',1:max(S.TrialsMatrix(:,3)));
 legend([l1 l2 l3 l4 l5],'Reward','Omission','Punishment','Hit','Missed','Location','east');
 legend('boxoff');
@@ -87,7 +86,6 @@ for i=1:ttNb
     if i>=ttNb-1
         xlabel(labelx);
     end
-    hold off
 end
 
 %Save the figure properties
@@ -116,7 +114,6 @@ if sum(licks>0 & licks<2)>3 && S.Valve==S.GUI.RewardValve
     title(sprintf('Trials outcome - Water = %.0d ul',figData.water));
 end
 
-        if currentTrialType<=6
 %% LickPlot
 %Extract the previous data from the plot
 previous_xdata=get(figData.lickplot(currentTrialType),'XData');   %lick time
@@ -138,7 +135,6 @@ newydata=linspace(trialTypeCount,trialTypeCount,size(licks,2));
 updated_ydata=[previous_ydata newydata];
 set(figData.lickplot(currentTrialType),'XData',updated_xdata,'YData',updated_ydata);
 set(figData.trackingplot(currentTrialType),'YData',[trialTypeCount trialTypeCount]);
-        end
 %% Update GUI plot parameters  
 set(figData.licksubplot(currentTrialType),'XLim',[minx maxx],'XTick',xtickvalues);
 end

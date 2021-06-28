@@ -1,8 +1,9 @@
-function [FigPhoto1,FigPhoto2,FigWheel]=Nidaq_Plots(action,FigPhoto1,FigPhoto2,FigWheel,StateToOffset)
+function [FigPhoto1,FigPhoto2,FigWheel]=Nidaq_Plots(action,FigPhoto1,FigPhoto2,FigWheel,StateToOffset,thisLicks)
 global BpodSystem nidaq S
 
 switch action
     case 'ini'
+        FigPhoto1=[]; FigPhoto2=[]; FigWheel=[];
 if S.GUI.Photometry
     FigPhoto1=Online_PhotoPlot('ini','470-F1',[],[],[],1);
     if S.GUI.DbleFibers
@@ -39,6 +40,6 @@ if S.GUI.Photometry
 end
 
 if S.GUI.Wheel
-    FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},currentTrial,currentLickEvents);
+    FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},thisLicks);
 end
 end

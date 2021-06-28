@@ -1,4 +1,4 @@
-function figData=Online_WheelPlot(action,figData,DataCount,StateToZero,thisTrial,thisLicks)
+function figData=Online_WheelPlot(action,figData,DataCount,StateToZero,thisLicks)
 global BpodSystem S
 %% Plot Parameters
 labelx='Time(sec)'; labely='AngularSpeed deg/sec'; labelyy='Angle deg';
@@ -61,7 +61,7 @@ ActualDuration=length(DataDeg)*deltaT-deltaT;
 %% Speed
 %time array
 Time=deltaT:deltaT:ActualDuration;
-TimeToZero=BpodSystem.Data.RawEvents.Trial{1,thisTrial}.States.(StateToZero)(1,1);
+TimeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(StateToZero)(1,1);
 Time=Time'-TimeToZero;
 
 %speed calculation

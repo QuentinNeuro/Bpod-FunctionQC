@@ -110,7 +110,7 @@ set(figData.curTrialplot,'Xdata', [currentTrial+1 currentTrial+1]);
 if sum(licks>0 & licks<2)>3 && S.Valve==S.GUI.RewardValve
     figData.water=figData.water+5;
     figure(figData.fig);
-    subplot(4,2,[1 2]);
+    subplot(rowP,2,[1 2]);
     title(sprintf('Trials outcome - Water = %.0d ul',figData.water));
 end
 

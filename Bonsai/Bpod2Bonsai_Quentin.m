@@ -1,7 +1,7 @@
 function success =Bpod2Bonsai_Quentin()
 global BpodSystem
 %% Bonsai exe and protocol location
-bonsaiEXE_Path='C:\Users\kepecs\AppData\Local\Bonsai\Bonsai.exe';
+bonsaiEXE_Path='C:\Users\kepecs\AppData\Local\Bonsai\Bonsai32.exe';
 bonsaiPro_Path='C:\Users\kepecs\Documents\Data\Quentin\Bonsai\Pupillometry_trigger.bonsai';
 bonsaiData_Path=fullfile('C:\Users\kepecs\Documents\Data\Quentin\Bonsai\');
 %% From Bpod

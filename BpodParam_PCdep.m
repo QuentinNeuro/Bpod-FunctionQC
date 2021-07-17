@@ -19,16 +19,22 @@ switch getenv('computername')
         Param.LED1Amp=2;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
+	case 'TQ_TOP'
+        Param.rig='Photometry4';
+        Param.nidaqDev='Dev1';
+        Param.LED1Amp=0.55;
+        Param.LED2Amp=5;
+        Param.LED1bAmp=2;
     case 'TQ_MIDDLE'
         Param.rig='Photometry5';
         Param.nidaqDev='Dev1';
         Param.LED1Amp=0.55;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
-    case 'KEPECSPHOTO-06'
+    case 'TQ_BOTTOM'
         Param.rig='Photometry6';
-        Param.nidaqDev='Dev2';
-        Param.LED1Amp=0.21;
+        Param.nidaqDev='Dev1';
+        Param.LED1Amp=0.55;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
     otherwise

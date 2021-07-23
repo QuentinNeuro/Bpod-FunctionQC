@@ -13,7 +13,10 @@ function sound=SoundGenerator(sampRate, meanFreq, widthFreq, nbOfFreq, duration,
     end
 volume=1;
 % Adjust the amplitude to get 75db
-% Last Calibration 
+if meanFreq>17000
+    volume=1*5;
+end
+% Last Calibration MM/DD/YYYY
 % if meanFreq<5000
 %     volume=1/3;
 % elseif meanFreq<9000

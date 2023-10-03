@@ -1,12 +1,17 @@
-function figData=Online_PhotoPlot(action,phototitle,figData,newData470,nidaqRaw,figID)
+function figData=Online_PhotoPlot(action,phototitle,figData,rawData,dataTW,timeTW,figID)
 global BpodSystem S
 %% general ploting parameters
 labelx='Time (sec)'; labely='DF/F'; 
-minx=S.GUI.TimeMin; maxx=S.GUI.TimeMax;  xstep=1;    xtickvalues=minx:xstep:maxx;
-miny=S.GUI.NidaqMin; maxy=S.GUI.NidaqMax;
+xTime=[S.GUI.TimeMin S.GUI.TimeMax]; xstep=1;   xtickvalues=xTime(1):xstep:xTime(2);
+yDFF=[S.GUI.NidaqMin S.GUI.NidaqMax];
+sampRate=S.GUI.NidaqSamplingRate;
+dt=1/sampRate;
+sampRateDF=sampRate/S.GUI.DecimateFactor;
+dtDF=1/sampRateDF;
+
 MeanThickness=2;
 ttNb=S.NumTrialTypes;
-rowP=ceil(ttNb/2)+1;
+rowP=ceil(ttNb/2)+1;m
 
 switch action
     case 'ini'
@@ -73,20 +78,20 @@ figData.meanplot=meanplot;
     case 'update'
 currentTrialType=BpodSystem.Data.TrialTypes(end);
 %% Update last recording plot
-set(figData.lastplotRaw, 'Xdata',nidaqRaw(:,1),'YData',nidaqRaw(:,2));
-set(figData.lastplot470, 'Xdata',newData470(:,1),'YData',newData470(:,2));
+set(figData.lastplotRaw, 'Xdata',rawData(:,1),'YData',rawData(:,2));
+set(figData.lastplot470, 'Xdata',dataTW(:,1),'YData',dataTW(:,2));
 
 %% Compute new average trace
 allData=get(figData.photosubplot(currentTrialType), 'UserData');
 dataSize=size(allData,2);
-allData(:,dataSize+1)=newData470(:,3);
+allData(:,dataSize+1)=dataTW(:,3);
 set(figData.photosubplot(currentTrialType), 'UserData', allData);
 meanData=mean(allData,2);
 
 curSubplot=figData.photosubplot(currentTrialType);
-set(figData.meanplot(currentTrialType), 'Xdata',newData470(:,1),'YData',meanData,'LineWidth',MeanThickness);
+set(figData.meanplot(currentTrialType), 'Xdata',dataTW(:,1),'YData',meanData,'LineWidth',MeanThickness);
 set(curSubplot,'NextPlot','add');
-plot(newData470(:,1),newData470(:,3),'-k','parent',curSubplot);
+plot(dataTW(:,1),dataTW(:,3),'-k','parent',curSubplot);
 uistack(figData.meanplot(currentTrialType), 'top');
 hold off
 %% Update GUI plot parameters

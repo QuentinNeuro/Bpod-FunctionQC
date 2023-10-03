@@ -1,19 +1,23 @@
-function [FigPhoto1,FigPhoto2,FigWheel]=Nidaq_Plots(action,FigPhoto1,FigPhoto2,FigWheel,StateToOffset,thisLicks)
+function [FigPhoto1,FigPhoto2,FigWheel]=Nidaq_Plots(action,FigPhoto1,FigPhoto2,FigWheel,thisLicks)
 global BpodSystem nidaq S
+
+plotTW=[S.GUI.TimeMin{1} S.GUI.TimeMax{1}];
+expectedSizeTW=diff(plotTW)*sampRateDF;
+timeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(stateToZero)(1,1);
 
 switch action
     case 'ini'
         FigPhoto1=[]; FigPhoto2=[]; FigWheel=[];
 if S.GUI.Photometry
-    FigPhoto1=Online_PhotoPlot('ini','470-F1',[],[],[],1);
+    FigPhoto1=Online_PhotoPlot('ini','470-F1',[],[],[],[],1);
     if S.GUI.DbleFibers
-        FigPhoto2=Online_PhotoPlot('ini','470-F2',[],[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','470-F2',[],[],[],[],2);
     end
     if S.GUI.Isobestic405 
-        FigPhoto2=Online_PhotoPlot('ini','405-F1',[],[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','405-F1',[],[],[],[],2);
     end
     if S.GUI.RedChannel
-        FigPhoto2=Online_PhotoPlot('ini','565-F1',[],[],[],2);
+        FigPhoto2=Online_PhotoPlot('ini','565-F1',[],[],[],[],2);
     end
 end
 if S.GUI.Wheel
@@ -22,9 +26,11 @@ end
 
     case 'update'
 if S.GUI.Photometry
-    [currentNidaq1, rawNidaq1]=Photometry_demod(BpodSystem.Data.NidaqData{end}(:,1),nidaq.LED1,S.GUI.LED1_Freq,S.GUI.LED1_Amp,S.Names.StateToZero{S.GUI.StateToZero});
-    currentNidaq1=Online_VariableITIAVG(currentNidaq1,StateToOffset);
-    FigPhoto1=Online_PhotoPlot('update',[],FigPhoto1,currentNidaq1,rawNidaq1);
+    rawData=BpodSystem.Data.NidaqData{end}(:,1)
+    demodData=Photometry_demod(rawData,nidaq.sample_rate,S.GUI.LED1_Freq,15);
+    [dataTW,timeTW]=Photometry_DFF_PSTH(demodData,stateToZero);
+
+    FigPhoto1=Online_PhotoPlot('update',[],FigPhoto1,rawData,dataTW,timeTW);
     
     if S.GUI.Isobestic405 || S.GUI.DbleFibers || S.GUI.RedChannel
         if S.GUI.Isobestic405

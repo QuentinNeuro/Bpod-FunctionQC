@@ -1,21 +1,31 @@
-function [FigPhoto1,FigPhoto2,FigWheel]=Nidaq_Plots2(action,FigPhoto1,FigPhoto2,FigWheel,thisLicks)
+function [FigPhoto1,FigPhoto2,FigWheel]=Online_NidaqPlot(action,FigPhoto1,FigPhoto2,FigWheel,thisLicks)
 global BpodSystem S
+
+task=BpodSystem.GUIData.ProtocolName;
 
 switch action
     case 'ini'
         FigPhoto1=[]; FigPhoto2=[]; FigWheel=[];
-if S.GUI.Photometry
-    FigPhoto1=Online_PhotoPlot2('ini','470-F1',[],[],[],1);
-    if S.GUI.DbleFibers
-        FigPhoto2=Online_PhotoPlot2('ini','470-F2',[],[],[],2);
+        if S.GUI.Photometry
+        switch task
+            case 'AuditoryTuning'
+                    FigPhoto1=Online_AudTuningPlot('ini','AudTun1',S.TrialSequence,[],[],[],1);
+                    if S.GUI.DbleFibers || S.GUI.Isobestic405 || S.GUI.RedChannel
+                        FigPhoto2=Online_AudTuningPlot('ini','AudTun2',S.TrialSequence,[],[],[],2);
+                    end
+            otherwise
+                FigPhoto1=Online_PhotoPlot2('ini','470-F1',[],[],[],1);
+                if S.GUI.DbleFibers
+                    FigPhoto2=Online_PhotoPlot2('ini','470-F2',[],[],[],2);
+                end
+                if S.GUI.Isobestic405 
+                    FigPhoto2=Online_PhotoPlot2('ini','405-F1',[],[],[],2);
+                end
+                if S.GUI.RedChannel
+                    FigPhoto2=Online_PhotoPlot2('ini','565-F1',[],[],[],2);
+                end
+        end
     end
-    if S.GUI.Isobestic405 
-        FigPhoto2=Online_PhotoPlot2('ini','405-F1',[],[],[],2);
-    end
-    if S.GUI.RedChannel
-        FigPhoto2=Online_PhotoPlot2('ini','565-F1',[],[],[],2);
-    end
-end
 if S.GUI.Wheel
     FigWheel=Online_WheelPlot('ini');
 end

@@ -26,15 +26,9 @@ FigSze=[ScrSze(3)*2/3 ScrSze(2)+40 ScrSze(3)*1/3 ScrSze(4)-120];
 end
 figPlot=figure('Name',figtitle,'Position',FigSze, 'numbertitle','off');
 hold on
-try
 ProtoSummary=sprintf('%s : %s -- %s - %s',...
     date, BpodSystem.GUIData.SubjectName, ...
     BpodSystem.GUIData.ProtocolName, S.Names.Phase{S.GUI.Phase});
-catch
-    ProtoSummary=sprintf('%s : %s -- %s - %s',...
-    date, BpodSystem.GUIData.SubjectName, ...
-    BpodSystem.GUIData.ProtocolName); 
-end
 ProtoLegend=uicontrol('style','text');
 set(ProtoLegend,'String',ProtoSummary); 
 set(ProtoLegend,'Position',[10,1,400,20]);
@@ -54,11 +48,7 @@ hold off
 for i=1:ttNb
     photosubplot(i)=subplot(rowP,2,i+2);
     hold on
-    try
-        title(sprintf('%s - cue # %.0d',S.TrialsNames{i},S.TrialsMatrix(i,3)));
-    catch
-        title(S.TrialsNames{i});
-    end
+    title(sprintf('%s - cue # %.0d',S.TrialsNames{i},S.TrialsMatrix(i,3)));
     ylim auto;
     set(photosubplot(i),'XLim',[minx maxx],'XTick',xtickvalues,'YLim',[miny maxy]);
 	rewplot(i)=plot([0 0],[-1,1],'-b');

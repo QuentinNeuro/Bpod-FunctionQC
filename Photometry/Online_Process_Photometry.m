@@ -13,7 +13,7 @@ TimeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(StateToZero)(1,1);
 
 %% demodulated data : decimate PSTH and DFF
 data=decimate(demodData,decimateFactor);
-[timeTW(:,1),dataTW(:,2)]=Online_PSTH(data,TW,TimeToZero,dsampRate);
+[TimeToZero,dataTW]=Online_PSTH(data,TW,TimeToZero,dsampRate);
 baselineAVG=mean(dataTW(baseTW_pts(1):baseTW_pts(2)),'omitnan');
 dataTWDFF=100*(dataTW-baselineAVG)/baselineAVG;
 

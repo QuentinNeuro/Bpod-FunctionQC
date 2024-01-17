@@ -18,8 +18,8 @@ if size(trialsMatrix,2)==8
     newtrialsMatrix=trialsMatrix;
 else
     %% Double trialNames cells and add Stim suffix
-    newtrialsNames=trialsNames;
-for i=1:length(trialsNames)
+    newtrialsNames=trialsNames(1:nbOfTrialTypes);
+for i=1:nbOfTrialTypes
     thisindex=i+length(trialsNames);
     newtrialsNames{thisindex}=[trialsNames{i} 'Stim'];
 end
@@ -35,7 +35,7 @@ newtrialsMatrix(:,end+1)=[zeros(nbOfTrialTypes,1);ones(nbOfTrialTypes,1)];
    newtrialsMatrix=newtrialsMatrix(idx0,:);
    newtrialsNames=newtrialsNames(idx0);
    for i=1:size(newtrialsMatrix,1)
-       newtrialsMatrix(:,i)=i;
+       newtrialsMatrix(i,1)=i;
    end
 end
 end

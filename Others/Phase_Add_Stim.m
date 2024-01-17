@@ -30,5 +30,12 @@ newtrialsMatrix(:,1)=1:newnbOfTrialTypes;
 newtrialsMatrix(:,2)=[trialsMatrix(:,2)*(1-stimprob) ; trialsMatrix(:,2)*stimprob];
 newtrialsMatrix(:,end+1)=[zeros(nbOfTrialTypes,1);ones(nbOfTrialTypes,1)];
 
+   %% remove trials with 0% proba
+   idx0=newtrialsMatrix(:,2)>0;
+   newtrialsMatrix=newtrialsMatrix(idx0,:);
+   newtrialsNames=newtrialsNames(idx0);
+   for i=1:size(newtrialsMatrix,1)
+       newtrialsMatrix(:,i)=i;
+   end
 end
 end

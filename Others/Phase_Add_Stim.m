@@ -9,7 +9,7 @@ global S
 %% Parameters
 stimprob=S.GUI.Opto_Proba;
 nbOfTrialTypes=size(trialsMatrix,1);
-
+trialsNames=trialsNames(1:nbOfTrialTypes);
 %% precheck
 if size(trialsMatrix,2)==8
     disp('Already Stim information in the TrialMatrix')
@@ -18,9 +18,9 @@ if size(trialsMatrix,2)==8
     newtrialsMatrix=trialsMatrix;
 else
     %% Double trialNames cells and add Stim suffix
-    newtrialsNames=trialsNames(1:nbOfTrialTypes);
+    newtrialsNames=trialsNames;
 for i=1:nbOfTrialTypes
-    thisindex=i+length(trialsNames);
+    thisindex=i+nbOfTrialTypes;
     newtrialsNames{thisindex}=[trialsNames{i} 'Stim'];
 end
     %% Double trialMatrix, adjust proba and add stim vector

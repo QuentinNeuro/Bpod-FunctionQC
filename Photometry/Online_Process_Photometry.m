@@ -5,7 +5,7 @@ global S BpodSystem
 sampRate=S.GUI.NidaqSamplingRate;
 decimateFactor=S.GUI.DecimateFactor;
 dsampRate=round(sampRate/decimateFactor);
-TW=[S.GUI.TimeMin S.GUI.TimeMax];
+TW=[SessionData.TrialSettings(1).GUI.TimeMin SessionData.TrialSettings(1).GUI.NidaqDuration];
 baseTW=[S.GUI.BaselineBegin S.GUI.BaselineEnd];
 baseTW_pts=baseTW*dsampRate;
 StateToZero=S.Names.StateToZero{S.GUI.StateToZero};

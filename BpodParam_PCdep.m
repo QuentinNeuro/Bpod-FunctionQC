@@ -31,7 +31,7 @@ switch getenv('computername')
         Param.LED1Amp=0.71;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
-        Param.PPCOM='COM6';
+        Param.PPCOM='COM4';
         Param.BPPP_BNC=2;
     case 'TQ_MIDDLE'
         Param.rig='Photometry5';

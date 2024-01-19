@@ -17,7 +17,7 @@ if size(trialsMatrix,2)==8
     newtrialsNames=trialsNames;
     newtrialsMatrix=trialsMatrix;
 else
-    %% Double trialNames cells and add Stim suffix
+%% Double trialNames cells and add Stim suffix
     newtrialsNames=trialsNames;
 for i=1:nbOfTrialTypes
     thisindex=i+nbOfTrialTypes;

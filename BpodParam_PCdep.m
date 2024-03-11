@@ -28,7 +28,7 @@ switch getenv('computername')
 	case 'TQ_TOP'
         Param.rig='Photometry4';
         Param.nidaqDev='Dev1';
-        Param.LED1Amp=0.71;
+        Param.LED1Amp=0.70;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
         Param.PPCOM='COM4';
@@ -44,7 +44,7 @@ switch getenv('computername')
     case 'TQ_BOTTOM'
         Param.rig='Photometry6';
         Param.nidaqDev='Dev1';
-        Param.LED1Amp=1.5;
+        Param.LED1Amp=2;
         Param.LED2Amp=5;
         Param.LED1bAmp=2;
         Param.PPCOM='COM5';

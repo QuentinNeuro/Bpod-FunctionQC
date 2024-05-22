@@ -45,19 +45,23 @@ lh{1} = nidaq.session.addlistener('DataAvailable',@Nidaq_callback);
 
     case 'WaitToStart'
 %% GET NIDAQ READY TO RECORD
+Phase=0;
+if isfield(S.GUI,'Phase')
+    Phase=S.GUI.Phase;
+end
 nidaq.ai_data            = [];
 if S.GUI.Photometry
-    nidaq.LED1              = Photometry_mod(S.GUI.LED1_Amp,S.GUI.LED1_Freq);
-    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq);
+    nidaq.LED1              = Photometry_mod(S.GUI.LED1_Amp,S.GUI.LED1_Freq,Phase);
+    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
 if S.GUI.Isobestic405 || S.GUI.RedChannel
-    nidaq.LED2              = Photometry_mod(S.GUI.LED2_Amp,S.GUI.LED2_Freq);
+    nidaq.LED2              = Photometry_mod(S.GUI.LED2_Amp,S.GUI.LED2_Freq,Phase);
 end
 if S.GUI.DbleFibers
-    nidaq.LED2              = Photometry_mod(S.GUI.LED1b_Amp,S.GUI.LED1b_Freq);
+    nidaq.LED2              = Photometry_mod(S.GUI.LED1b_Amp,S.GUI.LED1b_Freq,Phase);
 end
 else
-    nidaq.LED1              = Photometry_mod(0,S.GUI.LED1_Freq);
-    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq);
+    nidaq.LED1              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
+    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
 end
 nidaq.ao_data           = [nidaq.LED1 nidaq.LED2];
 

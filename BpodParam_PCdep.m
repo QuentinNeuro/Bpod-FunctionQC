@@ -1,5 +1,9 @@
 function Param=BpodParam_PCdep()
 
+        Param.LED1_Freq=211;
+        Param.LED2_Freq=531;
+        Param.LED1b_Freq=531;
+
 switch getenv('computername')
     case 'KEPECS-PHOTO01'
         Param.rig='Photometry1';

@@ -31,8 +31,12 @@ if S.GUI.Photometry
     %% demodulate the data
     sampRate=S.GUI.NidaqSamplingRate;
     modData=BpodSystem.Data.NidaqData{end}(:,1); modFreq=S.GUI.LED1_Freq;
+    Phase=0;
+    if isfield(S.GUI,'Phase')
+        Phase=S.GUI.Phase;
+    end
     if S.GUI.Modulation
-        demodData=Online_Demodulation(modData,sampRate,modFreq); % Demodulation
+        demodData=Online_Demodulation(modData,sampRate,modFreq,Phase); % Demodulation
     else
         demodData=modData;
     end
@@ -46,7 +50,7 @@ if S.GUI.Photometry
             modData2=BpodSystem.Data.Nidaq2Data{end}(:,1); modFreq=S.GUI.LED1b_Freq;
         end
     if S.GUI.Modulation
-        demodData2=Online_Demodulation(modData2,sampRate,modFreq);
+        demodData2=Online_Demodulation(modData2,sampRate,modFreq,Phase);
     else
         demodData2=modData2;
     end

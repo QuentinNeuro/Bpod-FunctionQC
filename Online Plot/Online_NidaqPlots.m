@@ -36,7 +36,7 @@ if S.GUI.Photometry
         Phase=S.GUI.Phase;
     end
     if S.GUI.Modulation
-        demodData=Online_Demodulation(modData,sampRate,modFreq,Phase); % Demodulation
+        demodData=Online_Demodulation(modData,sampRate,modFreq,15,Phase); % Demodulation
     else
         demodData=modData;
     end
@@ -50,7 +50,7 @@ if S.GUI.Photometry
             modData2=BpodSystem.Data.Nidaq2Data{end}(:,1); modFreq=S.GUI.LED1b_Freq;
         end
     if S.GUI.Modulation
-        demodData2=Online_Demodulation(modData2,sampRate,modFreq,Phase);
+        demodData2=Online_Demodulation(modData2,sampRate,modFreq,15,Phase);
     else
         demodData2=modData2;
     end
@@ -61,7 +61,7 @@ if S.GUI.Photometry
             case 'AuditoryTuning'
                 figPhoto1=Online_AudTuningPlot2('update',[],figPhoto1,demodDataTW,1);
             if S.GUI.Isobestic405 || S.GUI.DbleFibers || S.GUI.RedChannel
-                figPhoto2=Online_AudTuningPlot2('update',[],figPhoto2,demodDataTW2,1);
+                figPhoto2=Online_AudTuningPlot2('update',[],figPhoto2,demodDataTW2,2);
             end
         otherwise
                 figPhoto1=Online_PhotoPlot2('update',[],figPhoto1,demodDataTW,modDataTW);

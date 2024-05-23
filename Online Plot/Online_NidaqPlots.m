@@ -33,7 +33,7 @@ if S.GUI.Photometry
     modData=BpodSystem.Data.NidaqData{end}(:,1); modFreq=S.GUI.LED1_Freq;
     Phase=0;
     if isfield(S.GUI,'Phase')
-        Phase=S.GUI.Phase;
+        Phase=S.GUI.modPhase;
     end
     if S.GUI.Modulation
         demodData=Online_Demodulation(modData,sampRate,modFreq,15,Phase); % Demodulation

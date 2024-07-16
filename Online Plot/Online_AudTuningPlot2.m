@@ -7,7 +7,7 @@ MaxTrials=S.MaxTrials;
 minxPhoto=S.GUI.TimeMin; maxxPhoto=S.GUI.TimeMax;
 minyPhoto=S.GUI.NidaqMin; maxyPhoto=S.GUI.NidaqMax;
 baseline=[1 20]; %Data points
-soundResponse=[S.GUI.CueBegin S.GUI.CueEnd];
+soundResponse=[0 S.GUI.TimeCue];
 trialSequence=S.TrialSequence;
 
 switch action

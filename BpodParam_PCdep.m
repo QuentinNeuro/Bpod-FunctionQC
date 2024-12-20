@@ -11,7 +11,7 @@ switch getenv('computername')
         Param.LED1Amp=2;
         Param.LED2Amp=2.8;
         Param.LED1bAmp=2;
-        Param.PPCOM='COM4';
+        Param.PPCOM='COM5';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=1;
     case 'KEPECS-PHOTO02'
@@ -20,7 +20,7 @@ switch getenv('computername')
         Param.LED1Amp=2;
         Param.LED2Amp=2.5;
         Param.LED1bAmp=2;
-        Param.PPCOM='COM4';
+        Param.PPCOM='COM6';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=2;
     case 'KEPECS-PHOTO03'
@@ -29,7 +29,7 @@ switch getenv('computername')
         Param.LED1Amp=2;
         Param.LED2Amp=4;
         Param.LED1bAmp=2;
-        Param.PPCOM='COM4';
+        Param.PPCOM='COM6';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=3;
 	case 'TQ_TOP'

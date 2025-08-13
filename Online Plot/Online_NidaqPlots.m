@@ -19,11 +19,12 @@ switch action
                 if S.GUI.DbleFibers || S.GUI.Isobestic405 || S.GUI.RedChannel
                     figPhoto2=Online_PhotoPlot2('ini','F2',[],[],[],2);
                 end
+                if S.GUI.Wheel
+                    FigWheel=Online_WheelPlot('ini');
+                end
         end
         end
-        if S.GUI.Wheel
-            FigWheel=Online_WheelPlot('ini');
-        end
+
 
 %% %%%%%%%% Demodulate and update figures %%%%%%%%%% %%
     case 'update'
@@ -68,12 +69,13 @@ if S.GUI.Photometry
             if S.GUI.Isobestic405 || S.GUI.DbleFibers || S.GUI.RedChannel
                 figPhoto2=Online_PhotoPlot2('update',[],figPhoto2,demodDataTW2,modDataTW2);
             end
+            if S.GUI.Wheel
+                FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},thisLicks);
+            end
     end
     
 end
-if S.GUI.Wheel
-        FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},thisLicks);
-end
+
 
 end
 end

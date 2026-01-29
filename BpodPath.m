@@ -8,6 +8,7 @@ function BpodPath(Name)
 %% Designed by Quentin 2017 for kepecslab Bpod
 
 defaultPath='C:\Users\Kepecs\Documents\Bpod';
+
 %% User specific
 try
 switch Name

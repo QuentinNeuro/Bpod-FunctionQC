@@ -1,4 +1,4 @@
-function [newtrialsNames, newtrialsMatrix]=Phase_Add_Stim(trialsNames, trialsMatrix)
+function [newtrialsNames, newtrialsMatrix]=Phase_Add_Stim(trialsNames, trialsMatrix, stimprob)
 % Function to update trialsMatrix parameters and trialsNames for
 % stimulation using the same parameters and a probability specified in
 % the GUI
@@ -7,7 +7,6 @@ function [newtrialsNames, newtrialsMatrix]=Phase_Add_Stim(trialsNames, trialsMat
 
 global S
 %% Parameters
-stimprob=S.GUI.Opto_Proba;
 nbOfTrialTypes=size(trialsMatrix,1);
 trialsNames=trialsNames(1:nbOfTrialTypes);
 %% precheck

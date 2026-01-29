@@ -1,13 +1,13 @@
-function Modulated_LED=Photometry_mod(amp,freq,phase)
+function output=Photometry_mod(amp,freq,phase,fs,duration,modulation)
 %Generates a sin wave for LED amplitude modulation.
-global nidaq S
 
-if S.GUI.Modulation==0 || freq==0 || amp==0
-    Modulated_LED=(amp/2)*ones(nidaq.duration*nidaq.sample_rate,1);
+if modulation==0 || freq==0 || amp==0
+    output=(amp/2)*ones(duration*fs,1);
 else
-DeltaT=1/nidaq.sample_rate;
-Time=0:DeltaT:(nidaq.duration-DeltaT);
-Modulated_LED=amp*(sin(2*pi*freq*Time+phase)+1)/2;
-Modulated_LED=Modulated_LED';
+dt=1/fs;
+Time=0:dt:(duration-dt);
+output=amp*(sin(2*pi*freq*Time+phase)+1)/2;
+output=output';
 end
+
 end

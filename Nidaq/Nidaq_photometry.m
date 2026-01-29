@@ -1,4 +1,6 @@
 function [photometryData,wheelData,photometry2Data]=Nidaq_photometry(action,Param)
+%% QC 9/13 Working on adding two color two fibers
+
 global nidaq S 
 
 switch action
@@ -8,10 +10,14 @@ switch action
 nidaq.device            = Param.nidaqDev;
 nidaq.duration      	= S.GUI.NidaqDuration;
 nidaq.sample_rate     	= S.GUI.NidaqSamplingRate;
-nidaq.ai_channels       = {'ai0','ai1'};  
+nidaq.ai_channels       = {'ai0','ai1'};
 nidaq.ai_data           = [];
 nidaq.ao_channels       = {'ao0','ao1'};           % LED1 and LED2
 nidaq.ao_data           = [];
+
+if S.GUI.DbleFibers && S.GUI.RedChannel
+    nidaq.ai_channels       = {'ai0','ai1','ai2','ai3'}; %QC 9/13
+end
 
 daq.reset
 daq.HardwareInfo.getInstance('DisableReferenceClockSynchronization',true); % Necessary for this Nidaq
@@ -52,16 +58,16 @@ end
 nidaq.ai_data            = [];
 if S.GUI.Photometry
     nidaq.LED1              = Photometry_mod(S.GUI.LED1_Amp,S.GUI.LED1_Freq,Phase);
-    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
-if S.GUI.Isobestic405 || S.GUI.RedChannel
-    nidaq.LED2              = Photometry_mod(S.GUI.LED2_Amp,S.GUI.LED2_Freq,Phase);
-end
+    nidaq.LED2              = zeros(nidaq.duration*nidaq.sample_rate,1);
 if S.GUI.DbleFibers
     nidaq.LED2              = Photometry_mod(S.GUI.LED1b_Amp,S.GUI.LED1b_Freq,Phase);
 end
+if S.GUI.Isobestic405 || S.GUI.RedChannel
+    nidaq.LED2              = Photometry_mod(S.GUI.LED2_Amp,S.GUI.LED2_Freq,Phase);
+end
 else
-    nidaq.LED1              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
-    nidaq.LED2              = Photometry_mod(0,S.GUI.LED1_Freq,Phase);
+    nidaq.LED1              = zeros(nidaq.duration*nidaq.sample_rate,1);
+    nidaq.LED2              = zeros(nidaq.duration*nidaq.sample_rate,1);
 end
 nidaq.ao_data           = [nidaq.LED1 nidaq.LED2];
 

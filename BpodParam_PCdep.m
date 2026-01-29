@@ -59,13 +59,22 @@ switch getenv('computername')
         Param.PPCOM='COM5';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=3;
+    case 'ICM-EPHYS-WF004'
+        Param.rig='Bpod_ICM1';
+        Param.nidaqDev='Dev1';
+        Param.LED1Amp=1.2;
+        Param.LED2Amp=5;
+        Param.LED1bAmp=2;
+        Param.PPCOM='COM4'
+        Param.BPPP_BNC=2;
+        Param.Opto_TrialType=3;
     otherwise
         Param.rig='Unknown';
         Param.nidaqDev='Dev1';
-        Param.LED1Amp=0;
-        Param.LED2Amp=0;
-        Param.LED1bAmp=0;
-        Param.PPCOM='COM6';
+        Param.LED1Amp=1;
+        Param.LED2Amp=2;
+        Param.LED1bAmp=1;
+        Param.PPCOM='COM4';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=1;
         disp('Unrecognized computer - register possible in BpodParam_PCdep function')

@@ -1,5 +1,5 @@
 function [figPhoto1,figPhoto2,FigWheel]=Online_NidaqPlots(action,figPhoto1,figPhoto2,FigWheel,thisLicks)
-global BpodSystem S nidaq
+global BpodSystem S
 
 task=BpodSystem.GUIData.ProtocolName;
 
@@ -19,44 +19,38 @@ switch action
                 if S.GUI.DbleFibers || S.GUI.Isobestic405 || S.GUI.RedChannel
                     figPhoto2=Online_PhotoPlot2('ini','F2',[],[],[],2);
                 end
-                if S.GUI.Wheel
-                    FigWheel=Online_WheelPlot('ini');
-                end
         end
         end
-
+        if S.GUI.Wheel
+            FigWheel=Online_WheelPlot('ini');
+        end
 
 %% %%%%%%%% Demodulate and update figures %%%%%%%%%% %%
     case 'update'
 sampRate=S.GUI.NidaqSamplingRate;
 
 if S.GUI.Photometry
-    %% Demodulation channel 1
-    modData=nidaq.rec.ai_data(:,1);
+    %% demodulate the data
+    modData=BpodSystem.Data.Photometry.input{currentTrial}(:,1);
     modFreq=S.GUI.LED1_Freq;
     modPhase=S.GUI.modPhase;
+
     if S.GUI.Modulation
         demodData=Online_Demodulation(modData,sampRate,modFreq,15,modPhase); % Demodulation
     else
         demodData=modData;
     end
     [demodDataTW,modDataTW]=Online_Process_Photometry(demodData,modData);
-
-     %% Demodulation channel 1
     if S.GUI.Isobestic405 || S.GUI.DbleFibers || S.GUI.RedChannel
-    modFreq=S.GUI.LED2_Freq;
-    if S.GUI.Isobestic405
-        modData2=nidaq.rec.ai_data(:,1);
-    end
-    if xor(S.GUI.RedChannel,S.GUI.DbleFibers)
-        modData2=nidaq.rec.ai_data(:,2);
-    end
-    if and(S.GUI.RedChannel,S.GUI.DbleFibers)
-        modData2=nidaq.rec.ai_data(:,3);
-    end
-
+        if S.GUI.Isobestic405
+            modData2=BpodSystem.Data.NidaqData{end}(:,1); modFreq=S.GUI.LED2_Freq;
+        elseif S.GUI.RedChannel
+            modData2=BpodSystem.Data.Nidaq2Data{end}(:,1); modFreq=S.GUI.LED2_Freq;
+        elseif S.GUI.DbleFibers
+            modData2=BpodSystem.Data.Nidaq2Data{end}(:,1); modFreq=S.GUI.LED1b_Freq;
+        end
     if S.GUI.Modulation
-        demodData2=Online_Demodulation(modData2,sampRate,modFreq,15,modPhase);
+        demodData2=Online_Demodulation(modData2,sampRate,modFreq,15,Phase);
     else
         demodData2=modData2;
     end
@@ -74,13 +68,12 @@ if S.GUI.Photometry
             if S.GUI.Isobestic405 || S.GUI.DbleFibers || S.GUI.RedChannel
                 figPhoto2=Online_PhotoPlot2('update',[],figPhoto2,demodDataTW2,modDataTW2);
             end
-            if S.GUI.Wheel
-                FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},thisLicks);
-            end
     end
     
 end
-
+if S.GUI.Wheel
+    FigWheel=Online_WheelPlot('update',FigWheel,BpodSystem.Data.NidaqWheelData{end},S.Names.StateToZero{S.GUI.StateToZero},thisLicks);
+end
 
 end
 end

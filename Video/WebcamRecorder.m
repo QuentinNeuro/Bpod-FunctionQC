@@ -17,6 +17,7 @@ classdef WebcamRecorder < handle
         outputPath = '';               % Optional: directory path (empty = current directory)
         videoFormat = 'Motion JPEG AVI';  % Video format
         quality = 90;                  % Video quality (for MPEG-4)
+        dispInfo=0;
     end
     
     properties (Access = private)
@@ -117,12 +118,14 @@ classdef WebcamRecorder < handle
             obj.frameCount = 0;
             
             start(obj.timerObj);
+            if obj.dispInfo
             fprintf('Recording started: %s at %d fps\n', fullPath, obj.frameRate);
             if ~isempty(obj.roi)
                 fprintf('Using ROI: [x=%.0f, y=%.0f, width=%.0f, height=%.0f]\n', ...
                     obj.roi(1), obj.roi(2), obj.roi(3), obj.roi(4));
             else
                 fprintf('Using full frame\n');
+            end
             end
         end
         
@@ -146,8 +149,10 @@ classdef WebcamRecorder < handle
             obj.videoWriter = [];
             
             obj.isRecording = false;
-            fprintf('Recording stopped: %d frames captured\n', obj.frameCount);
-            fprintf('Video saved to: %s\n', fullPath);
+            if obj.dispInfo
+                fprintf('Recording stopped: %d frames captured\n', obj.frameCount);
+                fprintf('Video saved to: %s\n', fullPath);
+            end
         end
         
         function delete(obj)

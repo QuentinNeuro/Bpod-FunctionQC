@@ -1,0 +1,44 @@
+function recorder=Bpod_Video(action,type,recorder,currentTrial,filepath,filename)
+
+switch ty
+
+
+switch action
+    case 'ini'
+        switch type
+            case 1
+                Bpod2Bonsai_Quentin();
+            case 2
+                clear recorder
+                recorder = WebcamRecorder();
+                recorder.frameRate = 20;
+                recorder.videoFormat = 'MPEG-4';  % Smaller file size
+                recorder.quality = 90;
+                % File Path
+                if isempty(filepath)
+                    try
+                        [filepath,filename]=fileparts(BpodSystem.Path.CurrentDataFile);
+                        filepath=[filepath filesep filename];
+                        mkdir(filepath);
+                        recorder.outputpath=filepath;
+                    catch
+                        disp('Warning - videos will be saved in current folder path')
+                    end
+                end
+                recorder.selectROI();
+        end
+   %% Start webcam recording before start of trial
+   case 'Start'
+       if isempty(filename)
+           try
+           [~,filename]=fileparts(BpodSystem.Path.CurrentDataFile);
+           recorder.outputfile=sprintf('%s_%.0d',filename,currentTrial);
+           catch
+               disp('Warning - default video name')
+           end
+       end
+        recorder.start();
+  %% Start webcam recording at the end of trial
+    case 'Stop'
+         recorder.stop();
+end

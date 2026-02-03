@@ -17,7 +17,7 @@ classdef WebcamRecorder < handle
         outputPath = '';               % Optional: directory path (empty = current directory)
         videoFormat = 'Motion JPEG AVI';  % Video format
         quality = 90;                  % Video quality (for MPEG-4)
-        dispInfo=0;
+        dispInfo=1;
     end
     
     properties (Access = private)
@@ -30,16 +30,16 @@ classdef WebcamRecorder < handle
     end
     
     methods
-        function obj = WebcamRecorder()
+        function vidObj = WebcamRecorder()
             % Constructor - initializes webcam
             try
-                obj.cam = webcam();
+                vidObj.cam = webcam();
             catch ME
                 error('Could not initialize webcam: %s', ME.message);
             end
         end
         
-        function selectROI(obj)
+        function selectROI(vidObj)
             % Select Region of Interest interactively
             % Call this once before recording to set ROI for all subsequent recordings
             % 
@@ -48,7 +48,7 @@ classdef WebcamRecorder < handle
             % 2. Resize/move the rectangle if needed
             % 3. Double-click INSIDE the rectangle to confirm and continue
             
-            frame = snapshot(obj.cam);
+            frame = snapshot(vidObj.cam);
             
             figure('Name', 'Select Region of Interest', 'NumberTitle', 'off');
             imshow(frame);
@@ -61,125 +61,125 @@ classdef WebcamRecorder < handle
             fprintf('Waiting for ROI selection... (double-click inside rectangle to confirm)\n');
             wait(h);  % Wait for double-click
             
-            obj.roi = getPosition(h);
+            vidObj.roi = getPosition(h);
             close(gcf);
             
             fprintf('ROI confirmed: [x=%.0f, y=%.0f, width=%.0f, height=%.0f]\n', ...
-                obj.roi(1), obj.roi(2), obj.roi(3), obj.roi(4));
+                vidObj.roi(1), vidObj.roi(2), vidObj.roi(3), vidObj.roi(4));
         end
         
-        function clearROI(obj)
+        function clearROI(vidObj)
             % Clear ROI to use full frame
-            obj.roi = [];
+            vidObj.roi = [];
             fprintf('ROI cleared - will use full frame\n');
         end
         
-        function start(obj)
+        function start(vidObj)
             % Start background recording
-            if obj.isRecording
+            if vidObj.isRecording
                 warning('Recording already in progress');
                 return;
             end
             
             % Construct full file path
-            if isempty(obj.outputPath)
-                fullPath = obj.outputFile;
+            if isempty(vidObj.outputPath)
+                fullPath = vidObj.outputFile;
             else
                 % Create directory if it doesn't exist
-                if ~exist(obj.outputPath, 'dir')
-                    mkdir(obj.outputPath);
-                    fprintf('Created directory: %s\n', obj.outputPath);
+                if ~exist(vidObj.outputPath, 'dir')
+                    mkdir(vidObj.outputPath);
+                    fprintf('Created directory: %s\n', vidObj.outputPath);
                 end
-                fullPath = fullfile(obj.outputPath, obj.outputFile);
+                fullPath = fullfile(vidObj.outputPath, vidObj.outputFile);
             end
             
             % Get frame size
-            frame = snapshot(obj.cam);
-            if ~isempty(obj.roi)
-                frame = imcrop(frame, obj.roi);
+            frame = snapshot(vidObj.cam);
+            if ~isempty(vidObj.roi)
+                frame = imcrop(frame, vidObj.roi);
             end
             [height, width, ~] = size(frame);
             
             % Initialize video writer
-            obj.videoWriter = VideoWriter(fullPath, obj.videoFormat);
-            obj.videoWriter.FrameRate = obj.frameRate;
-            if strcmp(obj.videoFormat, 'MPEG-4')
-                obj.videoWriter.Quality = obj.quality;
+            vidObj.videoWriter = VideoWriter(fullPath, vidObj.videoFormat);
+            vidObj.videoWriter.FrameRate = vidObj.frameRate;
+            if strcmp(vidObj.videoFormat, 'MPEG-4')
+                vidObj.videoWriter.Quality = vidObj.quality;
             end
-            open(obj.videoWriter);
+            open(vidObj.videoWriter);
             
             % Create and start timer for background recording
-            obj.timerObj = timer(...
+            vidObj.timerObj = timer(...
                 'ExecutionMode', 'fixedRate', ...
-                'Period', 1/obj.frameRate, ...
-                'TimerFcn', @(~,~)obj.captureFrame());
+                'Period', 1/vidObj.frameRate, ...
+                'TimerFcn', @(~,~)vidObj.captureFrame());
             
-            obj.isRecording = true;
-            obj.frameCount = 0;
+            vidObj.isRecording = true;
+            vidObj.frameCount = 0;
             
-            start(obj.timerObj);
-            if obj.dispInfo
-            fprintf('Recording started: %s at %d fps\n', fullPath, obj.frameRate);
-            if ~isempty(obj.roi)
+            start(vidObj.timerObj);
+            if vidObj.dispInfo
+            fprintf('Recording started: %s at %d fps\n', fullPath, vidObj.frameRate);
+            if ~isempty(vidObj.roi)
                 fprintf('Using ROI: [x=%.0f, y=%.0f, width=%.0f, height=%.0f]\n', ...
-                    obj.roi(1), obj.roi(2), obj.roi(3), obj.roi(4));
+                    vidObj.roi(1), vidObj.roi(2), vidObj.roi(3), vidObj.roi(4));
             else
                 fprintf('Using full frame\n');
             end
             end
         end
         
-        function stop(obj)
+        function stop(vidObj)
             % Stop background recording
-            if ~obj.isRecording
+            if ~vidObj.isRecording
                 warning('No recording in progress');
                 return;
             end
             
             % Stop and delete timer
-            stop(obj.timerObj);
-            delete(obj.timerObj);
-            obj.timerObj = [];
+            stop(vidObj.timerObj);
+            delete(vidObj.timerObj);
+            vidObj.timerObj = [];
             
             % Get the full path before closing
-            fullPath = obj.videoWriter.Path;
+            fullPath = vidObj.videoWriter.Path;
             
             % Close video writer
-            close(obj.videoWriter);
-            obj.videoWriter = [];
+            close(vidObj.videoWriter);
+            vidObj.videoWriter = [];
             
-            obj.isRecording = false;
-            if obj.dispInfo
-                fprintf('Recording stopped: %d frames captured\n', obj.frameCount);
+            vidObj.isRecording = false;
+            if vidObj.dispInfo
+                fprintf('Recording stopped: %d frames captured\n', vidObj.frameCount);
                 fprintf('Video saved to: %s\n', fullPath);
             end
         end
         
-        function delete(obj)
+        function delete(vidObj)
             % Destructor - cleanup
-            if obj.isRecording
-                obj.stop();
+            if vidObj.isRecording
+                vidObj.stop();
             end
-            if ~isempty(obj.cam)
+            if ~isempty(vidObj.cam)
                 clear obj.cam;
             end
         end
     end
     
     methods (Access = private)
-        function captureFrame(obj)
+        function captureFrame(vidObj)
             % Capture and write a single frame (called by timer)
             try
-                frame = snapshot(obj.cam);
+                frame = snapshot(vidObj.cam);
                 
                 % Crop to ROI if specified
-                if ~isempty(obj.roi)
-                    frame = imcrop(frame, obj.roi);
+                if ~isempty(vidObj.roi)
+                    frame = imcrop(frame, vidObj.roi);
                 end
                 
                 % Write frame
-                writeVideo(obj.videoWriter, frame);
-                obj.frameCount = obj.frameCount + 1;
+                writeVideo(vidObj.videoWriter, frame);
+                vidObj.frameCount = vidObj.frameCount + 1;
                 
             catch ME
                 warning('Error capturing frame: %s', ME.message);

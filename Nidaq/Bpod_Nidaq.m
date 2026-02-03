@@ -1,4 +1,4 @@
-function Nidaq_Bpod(action,currentTrial)
+function Bpod_Nidaq(action,currentTrial)
 global nidaq S BpodSystem
 
 switch action
@@ -79,9 +79,13 @@ start(nidaq.session, "continuous");
 
     case 'Stop'
 %% STOP NIDAQ and get the output to zero
+disp('Check_ST01')
 stop(nidaq.session)
+disp('Check_ST02')
 flush(nidaq.session) % requiered before sending output to zero
+disp('Check_ST03')
 write(nidaq.session,zeros(1,size(nidaq.rec.ao_data,2)));
+disp('Check_ST04')
 
     case 'Save'
 %% Organize data in BpodSystsem structure

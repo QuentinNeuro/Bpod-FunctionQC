@@ -9,8 +9,8 @@ switch type
        switch action
            case 'ini' % Initialie webcam recording - Should be before main trial loop
                 clear vidObj
-                vidObj = WebcamRecorder();
-                vidObj.frameRate = 20;
+                vidObj = WebcamRecorder_log();
+                % vidObj.frameRate = 20;
                 vidObj.videoFormat = 'MPEG-4';  % Smaller file size
                 vidObj.quality = 90;
                 % File Path
@@ -28,12 +28,12 @@ switch type
    
            case 'Start' % Start webcam recording - before RunStateMatrix
                if nargin<6
-                   try
+                   % try
                    [~,filename]=fileparts(BpodSystem.Path.CurrentDataFile);
                    vidObj.outputFile=sprintf('%s_%.0d',filename,currentTrial);
-                   catch
-                       disp('Warning - default video name')
-                   end
+                   % catch
+                   %     disp('Warning - default video name')
+                   % end
                end
                 vidObj.start(); % Stop webcam recording - after RunStateMatrix
            case 'Stop'

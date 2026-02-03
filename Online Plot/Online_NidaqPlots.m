@@ -25,7 +25,6 @@ switch action
         end
         end
 
-
 %% %%%%%%%% Demodulate and update figures %%%%%%%%%% %%
     case 'update'
 sampRate=S.GUI.NidaqSamplingRate;
@@ -80,7 +79,5 @@ if S.GUI.Photometry
     end
     
 end
-
-
 end
 end

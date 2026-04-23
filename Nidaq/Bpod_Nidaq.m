@@ -34,7 +34,7 @@ if S.GUI.Photometry
     end
     if xor(S.GUI.RedChannel,S.GUI.DbleFibers)
         nidaq.input.list{2}='ai1';
-        nidaq.input.list{2}='ao1';
+        nidaq.output.list{2}='ao1';
     end
     % Dble fibers, dble channels
     if and(S.GUI.RedChannel,S.GUI.DbleFibers)
@@ -48,11 +48,13 @@ nidaq.session = daq('ni');
 nidaq.session.Rate = nidaq.settings.samplingrate;
 % Inputs
 for ch = unique(nidaq.input.list)
-    addinput(nidaq.session,nidaq.settings.device,ch,'Voltage');
+    nch=addinput(nidaq.session,nidaq.settings.device,ch,'Voltage');
+    nch.TerminalConfig='SingleEnded';
 end
 % Outputs
 for ch = unique(nidaq.output.list)
-    addoutput(nidaq.session,nidaq.settings.device,ch,'Voltage');
+    nch=addoutput(nidaq.session,nidaq.settings.device,ch,'Voltage');
+    nch.TerminalConfig='SingleEnded';
 end
 % Wheel
 if S.GUI.Wheel
@@ -79,13 +81,13 @@ start(nidaq.session, "continuous");
 
     case 'Stop'
 %% STOP NIDAQ and get the output to zero
-disp('Check_ST01')
 stop(nidaq.session)
-disp('Check_ST02')
+try
 flush(nidaq.session) % requiered before sending output to zero
-disp('Check_ST03')
 write(nidaq.session,zeros(1,size(nidaq.rec.ao_data,2)));
-disp('Check_ST04')
+catch
+    disp('error in stopping Bpod_Nidaq')
+end
 
     case 'Save'
 %% Organize data in BpodSystsem structure

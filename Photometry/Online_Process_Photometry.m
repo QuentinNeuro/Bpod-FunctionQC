@@ -7,7 +7,7 @@ decimateFactor=S.GUI.DecimateFactor;
 dsampRate=round(sampRate/decimateFactor);
 TW=[BpodSystem.Data.TrialSettings(1).GUI.TimeMin BpodSystem.Data.TrialSettings(1).GUI.NidaqDuration];
 baseTW=[S.GUI.BaselineBegin S.GUI.BaselineEnd];
-baseTW_pts=baseTW*dsampRate;
+baseTW_pts=int64(baseTW*dsampRate);
 StateToZero=S.Names.StateToZero{S.GUI.StateToZero};
 TimeToZero=BpodSystem.Data.RawEvents.Trial{1,end}.States.(StateToZero)(1,1);
 

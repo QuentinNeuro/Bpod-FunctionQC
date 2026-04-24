@@ -1,4 +1,4 @@
-function success =Bpod2Bonsai(User)
+function success =Bpod_Bonsai(User)
 global BpodSystem S
 %% Bonsai exe and protocol location
 bonsaiEXE_Path='C:\Users\kepecs\AppData\Local\Bonsai\Bonsai32.exe';

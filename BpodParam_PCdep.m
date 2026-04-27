@@ -59,13 +59,13 @@ switch getenv('computername')
         Param.PPCOM='COM5';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=3;
-    case 'ICM-EPHYS-WF004'
+    case 'DWS0074'
         Param.rig='Bpod_ICM1';
         Param.nidaqDev='Dev1';
-        Param.LED1Amp=1.2;
-        Param.LED2Amp=5;
-        Param.LED1bAmp=2;
-        Param.PPCOM='COM4'
+        Param.LED1Amp=1;
+        Param.LED2Amp=2;
+        Param.LED1bAmp=1;
+        Param.PPCOM='COM9';
         Param.BPPP_BNC=2;
         Param.Opto_TrialType=3;
     otherwise

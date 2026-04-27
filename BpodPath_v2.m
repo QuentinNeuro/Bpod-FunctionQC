@@ -3,8 +3,8 @@ function BpodPath_v2(varargin)
 %% Designed by Quentin 2026 for PBI ePHYS plateform
 global BpodSystem
 %% Default Bpod path
-defaultBpodPath='E:\Bpod Local\';
-defaultUserPath='E:\Bpod-Data\';
+defaultBpodPath='E:\Bpod\Bpod Local\';
+defaultUserPath='E:\Bpod\Bpod-Data\';
 
 %% Inputs
 % Parse inputs from varargin
@@ -27,6 +27,7 @@ if ~isempty(username)
         bpodpath=[userpath filesep username filesep];
     end
     if ~exist(bpodpath,'dir')
+        bpodpath
         disp('Bpod user does not exist, check BpodPath_v2')
         bpodpath=defaultBpodPath;
     end
